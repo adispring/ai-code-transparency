@@ -1,31 +1,41 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Backend server for model documentation form",
+  "main": "dist/main.js",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\"",
-    "start": "node dist/main.js",
-    "start:dev": "tsc-watch -p tsconfig.json --onSuccess \"node dist/main.js\"",
-    "start:debug": "tsc-watch -p tsconfig.json --onSuccess \"node --inspect-brk dist/main.js\"",
+    "start": "nest start",
+    "start:dev": "nest start --watch",
     "dev": "nest start --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start:debug": "nest start --debug --watch",
+    "start:prod": "node dist/main",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@nestjs/common": "^11.0.11",
-    "@nestjs/core": "^11.0.11",
-    "@nestjs/platform-express": "^11.0.11",
-    "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.2",
-    "typescript": "^5.8.2"
+    "@nestjs/common": "^10.0.0",
+    "@nestjs/core": "^10.0.0",
+    "@nestjs/platform-express": "^10.0.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
-    "@nestjs/cli": "^11.0.5",
-    "prettier": "^3.5.3",
-    "tsc-watch": "^6.2.1"
+    "@nestjs/cli": "^10.0.0",
+    "@types/express": "^4.17.17",
+    "@types/node": "^20.3.1",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.42.0",
+    "prettier": "^3.0.0",
+    "source-map-support": "^0.5.21",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.3"
   }
 }

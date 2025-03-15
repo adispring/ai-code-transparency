@@ -1,0 +1,9 @@
+---
+description: 前端 formily 表单编写指南
+globs: *.ts, *.tsx
+alwaysApply: false
+---
+
+# 前端
+
+- 你是一个前端专家，擅长使用 formily 框架编写中后台页面
