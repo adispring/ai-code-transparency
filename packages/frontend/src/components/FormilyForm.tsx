@@ -576,27 +576,6 @@ const schema = {
 const FormilyForm: React.FC = () => {
   const onSubmitSuccess = async (formData: any) => {
     message.success('Form submitted successfully!');
-    // try {
-    //   // 使用相对路径，将由 webpack devServer 代理
-    //   const response = await fetch('/api/model-documentation', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(formData),
-    //   });
-
-    //   if (!response.ok) {
-    //     throw new Error(`HTTP error! status: ${response.status}`);
-    //   }
-
-    //   const result = await response.json();
-    //   message.success('Form submitted successfully!');
-    //   console.log('Server response:', result);
-    // } catch (error) {
-    //   console.error('Failed to submit form:', error);
-    //   message.error('Failed to submit form. Please try again.');
-    // }
   };
 
   const onSubmitFailed = (errors: any) => {
@@ -631,22 +610,90 @@ const FormilyForm: React.FC = () => {
 
     // 处理表单数据，确保正确的结构
     const processFormData = (data: any) => {
-      const result: any = {};
+      const result: any = {
+        documentInfo: {},
+        generalInformation: {},
+        modelProperties: {},
+      };
 
-      // 处理 documentInfo
+      // 处理 documentInfo (这部分通常保持原有的结构)
       if (data.documentInfo) {
-        result.documentInfo = {
-          lastUpdated: data.documentInfo.lastUpdated,
-          documentVersion: data.documentInfo.documentVersion,
-        };
+        result.documentInfo = data.documentInfo;
       }
 
-      // 处理 generalInformation
-      if (data.generalInformation) {
-        result.generalInformation = {};
-        Object.entries(data.generalInformation).forEach(([key, value]: [string, any]) => {
-          if (value && typeof value === 'object') {
-            result.generalInformation[key] = {
+      // 映射各个字段到它们应该所属的部分
+      const fieldMappings = {
+        generalInformation: [
+          'legalName',
+          'modelFamily',
+          'versionedModel',
+          'modelAuthenticity',
+          'releaseDate',
+          'unionMarketRelease',
+          'modelDependencies',
+        ],
+        modelProperties: [
+          'modelArchitecture',
+          'designSpecification',
+          'inputModalities',
+          'outputModalities',
+          'totalModelSize',
+          'modelSizeRange',
+        ],
+      };
+
+      // 处理每个顶级字段
+      Object.entries(data).forEach(([key, value]: [string, any]) => {
+        // 跳过 documentInfo，它已经单独处理了
+        if (key === 'documentInfo') {
+          return;
+        }
+
+        // 确定字段所属的部分
+        let section = null;
+        if (fieldMappings.generalInformation.includes(key)) {
+          section = 'generalInformation';
+        } else if (fieldMappings.modelProperties.includes(key)) {
+          section = 'modelProperties';
+        }
+
+        if (section && value && typeof value === 'object') {
+          // 检查是否是模态字段，需要特殊处理
+          if (key.endsWith('Modalities') && section === 'modelProperties') {
+            const modalityValue = value.value || {};
+            const modalities = modalityValue.modalities || {
+              text: { enabled: false, parameter: '' },
+              images: { enabled: false, parameter: '' },
+              audio: { enabled: false, parameter: '' },
+              video: { enabled: false, parameter: '' },
+            };
+
+            // 确保每个模态都有完整的结构
+            ['text', 'images', 'audio', 'video'].forEach(modalityType => {
+              if (!modalities[modalityType]) {
+                modalities[modalityType] = { enabled: false, parameter: '' };
+              } else if (typeof modalities[modalityType] !== 'object') {
+                modalities[modalityType] = {
+                  enabled: Boolean(modalities[modalityType]),
+                  parameter: '',
+                };
+              }
+            });
+
+            result[section][key] = {
+              value: {
+                modalities,
+                customMetrics: modalityValue.customMetrics || [],
+              },
+              authorities: value.authorities || {
+                aio: false,
+                ncas: false,
+                dps: false,
+              },
+            };
+          } else {
+            // 处理普通字段
+            result[section][key] = {
               value: value.value || '',
               authorities: value.authorities || {
                 aio: false,
@@ -655,59 +702,14 @@ const FormilyForm: React.FC = () => {
               },
             };
           }
-        });
-      }
 
-      // 处理 modelProperties
-      if (data.modelProperties) {
-        result.modelProperties = {};
-        Object.entries(data.modelProperties).forEach(([key, value]: [string, any]) => {
-          if (value && typeof value === 'object') {
-            if (key.endsWith('Modalities')) {
-              const modalityValue = value.value || {};
-              const modalities = modalityValue.modalities || {
-                text: { enabled: false, parameter: '' },
-                images: { enabled: false, parameter: '' },
-                audio: { enabled: false, parameter: '' },
-                video: { enabled: false, parameter: '' },
-              };
-
-              // 确保每个模态都有完整的结构
-              ['text', 'images', 'audio', 'video'].forEach(modalityType => {
-                if (!modalities[modalityType]) {
-                  modalities[modalityType] = { enabled: false, parameter: '' };
-                } else if (typeof modalities[modalityType] !== 'object') {
-                  modalities[modalityType] = {
-                    enabled: Boolean(modalities[modalityType]),
-                    parameter: '',
-                  };
-                }
-              });
-
-              result.modelProperties[key] = {
-                value: {
-                  modalities,
-                  customMetrics: modalityValue.customMetrics || [],
-                },
-                authorities: value.authorities || {
-                  aio: false,
-                  ncas: false,
-                  dps: false,
-                },
-              };
-            } else {
-              result.modelProperties[key] = {
-                value: value.value || '',
-                authorities: value.authorities || {
-                  aio: false,
-                  ncas: false,
-                  dps: false,
-                },
-              };
-            }
+          // 合并嵌套的 authorities 信息（如果存在）
+          const nestedAuthorities = value[section]?.[key]?.authorities;
+          if (nestedAuthorities) {
+            Object.assign(result[section][key].authorities, nestedAuthorities);
           }
-        });
-      }
+        }
+      });
 
       return result;
     };
@@ -729,7 +731,6 @@ const FormilyForm: React.FC = () => {
       }
 
       const result = await response.json();
-      message.success('Form submitted successfully!');
       console.log('Server response:', result);
     } catch (error) {
       console.error('Failed to submit form:', error);

@@ -1,0 +1,18 @@
+{
+  "name": "pdf-to-word",
+  "version": "1.0.0",
+  "description": "A Node.js CLI script to convert PDF files to Word documents",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "bin": {
+    "pdf-to-word": "./index.js"
+  },
+  "dependencies": {
+    "commander": "^9.4.0",
+    "pdf2docx": "^1.0.0"
+  },
+  "author": "",
+  "license": "ISC"
+}
