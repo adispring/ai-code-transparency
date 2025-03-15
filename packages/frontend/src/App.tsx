@@ -11,16 +11,9 @@ export const App: React.FC = () => {
     <Layout style={{ minHeight: '100vh' }}>
       <Header className="header">
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <div style={{ color: 'white', fontSize: '1.5em' }}>
-            AI Code Transparency Form
-          </div>
+          <div style={{ color: 'white', fontSize: '1.5em' }}>AI Code Transparency Form</div>
           <Space>
-            <Button
-              type="link"
-              icon={<GithubOutlined />}
-              href="https://github.com"
-              target="_blank"
-            >
+            <Button type="link" icon={<GithubOutlined />} href="https://github.com" target="_blank">
               GitHub
             </Button>
           </Space>
