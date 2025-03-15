@@ -19,21 +19,24 @@ import {
 
 // 创建一个自定义组件来显示带有复选框的字段
 const FieldWithCheckboxes: React.FC<any> = props => {
-  const { children, basePath } = props;
+  const { children } = props;
   const field = useField<FieldType>();
 
   // 初始化时设置默认值
   React.useEffect(() => {
-    const defaultAuthorities = {
-      aio: false,
-      ncas: false,
-      dps: false,
+    const defaultValue = {
+      value: '',
+      authorities: {
+        aio: false,
+        ncas: false,
+        dps: false,
+      },
     };
 
     if (!field.value) {
-      field.setValue({ value: '', authorities: defaultAuthorities });
+      field.setValue(defaultValue);
     } else if (!field.value.authorities) {
-      field.setValue({ ...field.value, authorities: defaultAuthorities });
+      field.setValue({ ...field.value, authorities: defaultValue.authorities });
     }
   }, [field]);
 
@@ -42,47 +45,23 @@ const FieldWithCheckboxes: React.FC<any> = props => {
       <div style={{ flex: 1 }}>{children}</div>
       <div style={{ display: 'flex', gap: '10px', marginTop: '8px', minWidth: '200px' }}>
         <Field
-          name={`${basePath}.authorities.aio`}
+          name={`${field.address.toString()}.authorities.aio`}
           component={[Checkbox]}
-          decorator={[FormItem]}
-          initialValue={false}
-          reactions={field => {
-            field.setComponentProps({
-              onChange: (checked: boolean) => {
-                field.setValue(checked);
-              },
-            });
-          }}
+          decorator={[FormItem, { feedbackLayout: 'none' }]}
         >
           AIO
         </Field>
         <Field
-          name={`${basePath}.authorities.ncas`}
+          name={`${field.address.toString()}.authorities.ncas`}
           component={[Checkbox]}
-          decorator={[FormItem]}
-          initialValue={false}
-          reactions={field => {
-            field.setComponentProps({
-              onChange: (checked: boolean) => {
-                field.setValue(checked);
-              },
-            });
-          }}
+          decorator={[FormItem, { feedbackLayout: 'none' }]}
         >
           NCAs
         </Field>
         <Field
-          name={`${basePath}.authorities.dps`}
+          name={`${field.address.toString()}.authorities.dps`}
           component={[Checkbox]}
-          decorator={[FormItem]}
-          initialValue={false}
-          reactions={field => {
-            field.setComponentProps({
-              onChange: (checked: boolean) => {
-                field.setValue(checked);
-              },
-            });
-          }}
+          decorator={[FormItem, { feedbackLayout: 'none' }]}
         >
           DPs
         </Field>
@@ -117,7 +96,7 @@ const SchemaField = createSchemaField({
     Select,
     DatePicker,
     NumberPicker,
-    Radio,
+    Radio: Radio.Group,
     Checkbox,
     ArrayItems,
     FieldWithCheckboxes,
@@ -133,22 +112,31 @@ const createFieldSchema = (fieldConfig: any, fieldPath: string) => {
   return {
     type: 'object',
     'x-component': 'FieldWithCheckboxes',
-    'x-decorator-props': {
-      basePath: fieldPath,
-    },
     properties: {
       value: {
         ...rest,
-        type: 'string',
+        type: component === 'Radio.Group' ? 'string' : 'string',
         title,
         description,
         required,
         'x-component': component || 'Input',
-        'x-component-props': componentProps || {},
+        'x-component-props': {
+          ...(componentProps || {}),
+          ...(component === 'Radio.Group'
+            ? {
+                optionType: 'button',
+                options: componentProps?.enum?.map((item: any) => ({
+                  label: item.label,
+                  value: item.value,
+                })),
+              }
+            : {}),
+        },
         'x-decorator': 'FormItem',
       },
       authorities: {
         type: 'object',
+        'x-component': 'div',
         properties: {
           aio: {
             type: 'boolean',
@@ -566,9 +554,9 @@ const schema = {
         modelSizeRange: createFieldSchema(
           {
             title: 'Model size range',
-            component: 'Radio.Group',
+            component: 'Radio',
             componentProps: {
-              enum: [
+              options: [
                 { label: '1-500M', value: '1-500M' },
                 { label: '500M-5B', value: '500M-5B' },
                 { label: '5B-15B', value: '5B-15B' },
@@ -639,7 +627,7 @@ const FormilyForm: React.FC = () => {
   };
 
   const onSubmit = async (value: any) => {
-    console.log('表单原始数据：', value);
+    console.log('表单原始数据：', JSON.stringify(value));
 
     // 处理表单数据，确保正确的结构
     const processFormData = (data: any) => {
@@ -658,16 +646,13 @@ const FormilyForm: React.FC = () => {
         result.generalInformation = {};
         Object.entries(data.generalInformation).forEach(([key, value]: [string, any]) => {
           if (value && typeof value === 'object') {
-            const authorities = { aio: false, ncas: false, dps: false };
-
-            // 合并所有可能的 authorities
-            if (value.authorities) {
-              Object.assign(authorities, value.authorities);
-            }
-
             result.generalInformation[key] = {
               value: value.value || '',
-              authorities,
+              authorities: value.authorities || {
+                aio: false,
+                ncas: false,
+                dps: false,
+              },
             };
           }
         });
@@ -678,13 +663,6 @@ const FormilyForm: React.FC = () => {
         result.modelProperties = {};
         Object.entries(data.modelProperties).forEach(([key, value]: [string, any]) => {
           if (value && typeof value === 'object') {
-            const authorities = { aio: false, ncas: false, dps: false };
-
-            // 合并所有可能的 authorities
-            if (value.authorities) {
-              Object.assign(authorities, value.authorities);
-            }
-
             if (key.endsWith('Modalities')) {
               const modalityValue = value.value || {};
               const modalities = modalityValue.modalities || {
@@ -711,12 +689,20 @@ const FormilyForm: React.FC = () => {
                   modalities,
                   customMetrics: modalityValue.customMetrics || [],
                 },
-                authorities,
+                authorities: value.authorities || {
+                  aio: false,
+                  ncas: false,
+                  dps: false,
+                },
               };
             } else {
               result.modelProperties[key] = {
                 value: value.value || '',
-                authorities,
+                authorities: value.authorities || {
+                  aio: false,
+                  ncas: false,
+                  dps: false,
+                },
               };
             }
           }
