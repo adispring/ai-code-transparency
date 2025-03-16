@@ -53,3 +53,7 @@ This project focuses on transparency in AI-generated code. When generating code 
 - Keep the documentation up-to-date with code changes
 
 Remember to ensure any generated code aligns with the project's focus on transparency and ethical AI usage.
+
+## Additional Resources
+
+- 使用 pnpm 安装依赖

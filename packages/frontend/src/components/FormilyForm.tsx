@@ -1,7 +1,7 @@
 import React from 'react';
 import { createForm } from '@formily/core';
 import { FormProvider, createSchemaField, Field, useField } from '@formily/react';
-import type { Field as FieldType } from '@formily/core';
+import type { Field as FieldType, IFormFeedback } from '@formily/core';
 import { theme, message } from 'antd';
 import {
   Form,
@@ -15,6 +15,7 @@ import {
   Radio,
   Checkbox,
   ArrayItems,
+  FormGrid,
 } from '@formily/antd-v5';
 
 // 创建一个自定义组件来显示带有复选框的字段
@@ -101,6 +102,7 @@ const SchemaField = createSchemaField({
     ArrayItems,
     FieldWithCheckboxes,
     TableContainer,
+    FormGrid,
   },
 });
 
@@ -115,7 +117,7 @@ const createFieldSchema = (fieldConfig: any, fieldPath: string) => {
     properties: {
       value: {
         ...rest,
-        type: component === 'Radio.Group' ? 'string' : 'string',
+        type: 'string',
         title,
         description,
         required,
@@ -384,24 +386,37 @@ const schema = {
   properties: {
     documentInfo: {
       type: 'void',
-      'x-component': 'FormItem',
+      'x-component': 'TableContainer',
       'x-component-props': {
-        style: { marginBottom: '24px' },
+        title: 'Document Information',
       },
       properties: {
-        lastUpdated: {
-          type: 'string',
-          title: 'Date the document was last updated',
-          'x-decorator': 'FormItem',
-          'x-component': 'DatePicker',
-        },
-        documentVersion: {
-          type: 'string',
-          title: 'Document version number',
-          'x-decorator': 'FormItem',
-          'x-component': 'Input',
+        grid: {
+          type: 'void',
+          'x-component': 'FormGrid',
           'x-component-props': {
-            placeholder: 'e.g., 1.0.0',
+            minColumns: 2,
+            maxColumns: 2,
+            columnGap: 24,
+          },
+          properties: {
+            lastUpdated: {
+              type: 'string',
+              title: 'Date the document was last updated',
+              required: true,
+              'x-decorator': 'FormItem',
+              'x-component': 'DatePicker',
+            },
+            documentVersion: {
+              type: 'string',
+              title: 'Document version number',
+              required: true,
+              'x-decorator': 'FormItem',
+              'x-component': 'Input',
+              'x-component-props': {
+                placeholder: 'e.g., 1.0.0',
+              },
+            },
           },
         },
       },
@@ -481,7 +496,7 @@ const schema = {
           {
             title: 'Model dependencies',
             description:
-              'The list of other general-purpose AI models that the model builds upon, if any',
+              'The list of other general-purpose AI models that the model builds upon, if any (e.g. the list for llama-3.1-nemotron-70b would be [llama-3.1] and the list for llama-3.1 would be empty). For each listed model dependency, please include a copy or link to the associated Model Documentation or indicate that the Model Documentation is not accessible.',
             component: 'Input.TextArea',
             componentProps: {
               placeholder: 'e.g., Base model: Llama-2, Fine-tuned with: RLHF',
@@ -511,6 +526,16 @@ const schema = {
             },
           },
           'modelProperties.modelArchitecture'
+        ),
+        modelArchitectureWithRisk: createFieldSchema(
+          {
+            title: 'Model architecture with risk',
+            description: `If the model is a general-purpose AI model with systemic risk, provide a detailed description of the model
+architecture, specifying where it departs from standard architectures where applicable. If the model is not a
+general-purpose AI model with systemic risk, write 'N/A'.`,
+            component: 'Input.TextArea',
+          },
+          'modelProperties.modelArchitectureWithRisk'
         ),
         designSpecification: createFieldSchema(
           {
@@ -578,11 +603,18 @@ const FormilyForm: React.FC = () => {
     message.success('Form submitted successfully!');
   };
 
-  const onSubmitFailed = (errors: any) => {
+  const onSubmitFailed = (errors: IFormFeedback[]) => {
     console.error('Form validation errors:', errors);
-    if (Array.isArray(errors) && errors.length > 0) {
-      // 显示所有验证错误
-      const errorMessages = errors.map(error => error.messages?.[0]).filter(Boolean);
+
+    console.log('Errors:', errors);
+
+    if (errors.length > 0) {
+      const errorMessages = errors
+        .map(error => {
+          return `${error.path}: ${error.messages?.[0]}`;
+        })
+        .filter(Boolean);
+
       if (errorMessages.length > 0) {
         message.error({
           content: (
@@ -595,7 +627,7 @@ const FormilyForm: React.FC = () => {
               </ul>
             </div>
           ),
-          duration: 5, // 显示 5 秒
+          duration: 10, // 增加显示时间到10秒
         });
       } else {
         message.error('Form validation failed. Please check your inputs.');

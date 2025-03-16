@@ -10,8 +10,7 @@
     "pdf-to-word": "./index.js"
   },
   "dependencies": {
-    "commander": "^9.4.0",
-    "pdf2docx": "^1.0.0"
+    "commander": "^9.4.0"
   },
   "author": "",
   "license": "ISC"

@@ -51,3 +51,5 @@ Thumbs.db
 # Production
 .vercel
 .netlify
+
+packages/docs
