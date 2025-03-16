@@ -37,7 +37,7 @@ const filterDataByAuthority = (
 
 @Controller()
 export class ModelDocumentationController {
-  @Post('api/model-documentation/:path')
+  @Post('api/model-documentation')
   async submitForm(@Req() req: Request, @Body() formData: ModelDocumentationDto) {
     try {
       // printFieldDescriptions(ModelDocumentationDto);
