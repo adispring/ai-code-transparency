@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Req } from '@nestjs/common';
+import { Controller, Post, Body, Req, Get } from '@nestjs/common';
 import {
   DocumentInfoDto,
   GeneralInformationDto,
@@ -9,6 +9,7 @@ import { Request } from 'express';
 import { printFieldDescriptions } from 'src/utils/metadata.util';
 import { getDescription } from 'src/decorators/description.decorator';
 import { generateDocFile } from '../utils/doc.util';
+import { saveFormData, getFormData } from '../utils/storage.util';
 
 const transformDocumentInfo = (documentInfo: DocumentInfoDto) => {
   return Object.fromEntries(
@@ -34,12 +35,10 @@ const filterDataByAuthority = (
   return filteredEntries;
 };
 
-@Controller('api/model-documentation')
+@Controller()
 export class ModelDocumentationController {
-  @Post()
+  @Post('api/model-documentation/:path')
   async submitForm(@Req() req: Request, @Body() formData: ModelDocumentationDto) {
-    // console.log('req.body:', req.body);
-    // console.log('Form Data:', formData);
     try {
       // printFieldDescriptions(ModelDocumentationDto);
 
@@ -72,6 +71,21 @@ export class ModelDocumentationController {
       console.log('NCAS Data:', ncasData);
       console.log('DPS Data:', dpsData);
 
+      // Save form data to database
+      await saveFormData({
+        formData,
+        processedData: {
+          aioData,
+          ncasData,
+          dpsData,
+        },
+        generatedFiles: {
+          aioFilePath,
+          ncasFilePath,
+          dpsFilePath,
+        },
+      });
+
       return {
         success: true,
         message: 'Form data received and validated successfully',
@@ -85,6 +99,50 @@ export class ModelDocumentationController {
             ncasFilePath,
             dpsFilePath,
           },
+        },
+      };
+    } catch (error: any) {
+      console.error('Error processing form data:', error);
+      return {
+        success: false,
+        message: 'Error processing form data',
+        error: error?.message || 'Unknown error',
+      };
+    }
+  }
+
+  @Get('api/external/get-form-data')
+  async getFormData() {
+    try {
+      const data = await getFormData();
+      return {
+        success: true,
+        data,
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        message: 'Error syncing form data',
+        error: error?.message || 'Unknown error',
+      };
+    }
+  }
+
+  @Post('api/company/sync-form-data')
+  async syncFormData(@Req() req: Request, @Body() formData: ModelDocumentationDto) {
+    try {
+      // printFieldDescriptions(ModelDocumentationDto);
+
+      // Save form data to database
+      await saveFormData({
+        formData,
+      });
+
+      return {
+        success: true,
+        message: 'Form data received and validated successfully',
+        data: {
+          originalData: formData,
         },
       };
     } catch (error: any) {

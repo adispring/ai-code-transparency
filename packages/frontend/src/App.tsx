@@ -1,17 +1,20 @@
 import React from 'react';
-import { Layout } from 'antd';
-import FormilyForm from './components/FormilyForm';
-
-const { Content } = Layout;
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import MainLayout from './components/MainLayout';
+import Home from './pages/Home';
+import CompanyData from './pages/Company';
+import ExternalData from './pages/External';
 
 export const App: React.FC = () => {
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Content style={{ padding: '50px' }}>
-        <div className="site-layout-content">
-          <FormilyForm />
-        </div>
-      </Content>
-    </Layout>
+    <BrowserRouter>
+      <MainLayout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/company-data" element={<CompanyData />} />
+          <Route path="/external-data" element={<ExternalData />} />
+        </Routes>
+      </MainLayout>
+    </BrowserRouter>
   );
 };

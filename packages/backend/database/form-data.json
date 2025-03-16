@@ -1,0 +1,164 @@
+{
+  "formData": {
+    "documentInfo": {
+      "lastUpdated": "2025-03-09",
+      "documentVersion": "1.2.0"
+    },
+    "generalInformation": {
+      "legalName": {
+        "value": "Anthropec",
+        "authorities": {
+          "aio": true,
+          "ncas": false,
+          "dps": false
+        }
+      },
+      "modelFamily": {
+        "value": "PalM",
+        "authorities": {
+          "aio": false,
+          "ncas": true,
+          "dps": false
+        }
+      },
+      "versionedModel": {
+        "value": "Llama-32K",
+        "authorities": {
+          "aio": false,
+          "ncas": false,
+          "dps": true
+        }
+      },
+      "modelAuthenticity": {
+        "value": "SHA",
+        "authorities": {
+          "aio": false,
+          "ncas": true,
+          "dps": false
+        }
+      },
+      "releaseDate": {
+        "value": "2025-03-02",
+        "authorities": {
+          "aio": true,
+          "ncas": false,
+          "dps": false
+        }
+      },
+      "unionMarketRelease": {
+        "value": "2025-03-09",
+        "authorities": {
+          "aio": false,
+          "ncas": true,
+          "dps": false
+        }
+      },
+      "modelDependencies": {
+        "value": "Fine",
+        "authorities": {
+          "aio": true,
+          "ncas": false,
+          "dps": false
+        }
+      }
+    },
+    "modelProperties": {
+      "modelArchitecture": {
+        "value": "transformer architecture",
+        "authorities": {
+          "aio": true,
+          "ncas": false,
+          "dps": false
+        }
+      },
+      "modelArchitectureWithRisk": {
+        "value": "",
+        "authorities": {
+          "aio": false,
+          "ncas": false,
+          "dps": false
+        }
+      },
+      "designSpecification": {
+        "value": "",
+        "authorities": {
+          "aio": false,
+          "ncas": false,
+          "dps": false
+        }
+      },
+      "inputModalities": {
+        "value": {
+          "modalities": {
+            "text": {
+              "enabled": true,
+              "parameter": "3b"
+            },
+            "images": {
+              "enabled": false,
+              "parameter": ""
+            },
+            "audio": {
+              "enabled": false,
+              "parameter": ""
+            },
+            "video": {
+              "enabled": false,
+              "parameter": ""
+            }
+          },
+          "customMetrics": []
+        },
+        "authorities": {
+          "aio": true,
+          "ncas": false,
+          "dps": false
+        }
+      },
+      "outputModalities": {
+        "value": {
+          "modalities": {
+            "text": {
+              "enabled": true,
+              "parameter": "3b"
+            },
+            "images": {
+              "enabled": false,
+              "parameter": ""
+            },
+            "audio": {
+              "enabled": false,
+              "parameter": ""
+            },
+            "video": {
+              "enabled": false,
+              "parameter": ""
+            }
+          },
+          "customMetrics": []
+        },
+        "authorities": {
+          "aio": true,
+          "ncas": false,
+          "dps": false
+        }
+      },
+      "totalModelSize": {
+        "value": "100",
+        "authorities": {
+          "aio": true,
+          "ncas": false,
+          "dps": false
+        }
+      },
+      "modelSizeRange": {
+        "value": "1-500M",
+        "authorities": {
+          "aio": false,
+          "ncas": false,
+          "dps": false
+        }
+      }
+    }
+  }
+}
