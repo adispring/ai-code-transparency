@@ -71,21 +71,6 @@ export class ModelDocumentationController {
       console.log('NCAS Data:', ncasData);
       console.log('DPS Data:', dpsData);
 
-      // Save form data to database
-      await saveFormData({
-        formData,
-        processedData: {
-          aioData,
-          ncasData,
-          dpsData,
-        },
-        generatedFiles: {
-          aioFilePath,
-          ncasFilePath,
-          dpsFilePath,
-        },
-      });
-
       return {
         success: true,
         message: 'Form data received and validated successfully',
