@@ -12,7 +12,7 @@ interface FilteredData {
 }
 
 const FirstLevelKeyMap = {
-  documentInfo: 'Document Information',
+  documentInfo: '',
   generalInformation: 'General Information',
   modelProperties: 'Model Properties',
 };
@@ -25,6 +25,9 @@ function generateParagraphs(data: FilteredData): Paragraph[] {
       text: 'Model Documentation Form',
       heading: 'Title',
       alignment: 'center',
+      spacing: {
+        after: 600, // Large spacing after title
+      },
     })
   );
 
@@ -44,7 +47,7 @@ function generateParagraphs(data: FilteredData): Paragraph[] {
       // Add section heading (centered)
       paragraphs.push(
         new Paragraph({
-          text: FirstLevelKeyMap[section as keyof typeof FirstLevelKeyMap] || section,
+          text: FirstLevelKeyMap[section as keyof typeof FirstLevelKeyMap],
           heading: 'Heading1',
           alignment: 'center',
           spacing: {

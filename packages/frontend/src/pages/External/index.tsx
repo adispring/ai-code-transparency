@@ -109,7 +109,7 @@ export const FormilyForm: React.FC = () => {
     console.log('Restructured data:', restructuredData);
 
     try {
-      const response = await fetch('/api/model-documentation', {
+      const response = await fetch('api/external/export-form-data', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

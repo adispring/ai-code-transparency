@@ -1,12 +1,12 @@
 {
   "formData": {
     "documentInfo": {
-      "lastUpdated": "2025-03-16",
-      "documentVersion": "1.0.0"
+      "lastUpdated": "2025-03-09",
+      "documentVersion": "1"
     },
     "generalInformation": {
       "legalName": {
-        "value": "openai",
+        "value": "a",
         "authorities": {
           "aio": true,
           "ncas": false,
@@ -14,7 +14,7 @@
         }
       },
       "modelFamily": {
-        "value": "gpt",
+        "value": "b",
         "authorities": {
           "aio": false,
           "ncas": true,
@@ -22,7 +22,7 @@
         }
       },
       "versionedModel": {
-        "value": "llama-7",
+        "value": "c",
         "authorities": {
           "aio": false,
           "ncas": false,
@@ -30,43 +30,43 @@
         }
       },
       "modelAuthenticity": {
-        "value": "asdf",
+        "value": "",
         "authorities": {
-          "aio": true,
+          "aio": false,
           "ncas": false,
           "dps": false
         }
       },
       "releaseDate": {
-        "value": "2025-03-09",
+        "value": "",
         "authorities": {
-          "aio": true,
+          "aio": false,
           "ncas": false,
           "dps": false
         }
       },
       "unionMarketRelease": {
-        "value": "2025-03-19",
+        "value": "",
         "authorities": {
           "aio": false,
-          "ncas": true,
+          "ncas": false,
           "dps": false
         }
       },
       "modelDependencies": {
-        "value": "The list of other general-purpose AI models that the model builds upon, if any (e.g. the list for llama-3.1-nemotron-70b would be [llama-3.1] and the list for llama-3.1 would be empty). For each listed model dependency, please include a copy or link to the associated Model Documentation or indicate that the Model Documentation is not accessible.",
+        "value": "",
         "authorities": {
           "aio": false,
-          "ncas": true,
+          "ncas": false,
           "dps": false
         }
       }
     },
     "modelProperties": {
       "modelArchitecture": {
-        "value": "A general description of the model architecture, e.g. a transformer architecture.",
+        "value": "d",
         "authorities": {
-          "aio": true,
+          "aio": false,
           "ncas": false,
           "dps": false
         }
@@ -80,10 +80,10 @@
         }
       },
       "designSpecification": {
-        "value": "ey design choices of the model, including rationale and assumptions made, to provide better understanding of the model",
+        "value": "",
         "authorities": {
           "aio": false,
-          "ncas": true,
+          "ncas": false,
           "dps": false
         }
       },
@@ -91,8 +91,8 @@
         "value": {
           "modalities": {
             "text": {
-              "enabled": true,
-              "parameter": "2b"
+              "enabled": false,
+              "parameter": ""
             },
             "images": {
               "enabled": false,
@@ -119,8 +119,8 @@
         "value": {
           "modalities": {
             "text": {
-              "enabled": true,
-              "parameter": "5b"
+              "enabled": false,
+              "parameter": ""
             },
             "images": {
               "enabled": false,
@@ -138,239 +138,27 @@
           "customMetrics": []
         },
         "authorities": {
-          "aio": true,
-          "ncas": true,
+          "aio": false,
+          "ncas": false,
           "dps": false
         }
       },
       "totalModelSize": {
-        "value": "7.5*10^10",
-        "authorities": {
-          "aio": false,
-          "ncas": true,
-          "dps": false
-        }
-      },
-      "modelSizeRange": {
         "value": "",
         "authorities": {
           "aio": false,
           "ncas": false,
-          "dps": true
+          "dps": false
+        }
+      },
+      "modelSizeRange": {
+        "value": "1-500M",
+        "authorities": {
+          "aio": true,
+          "ncas": false,
+          "dps": false
         }
       }
     }
-  },
-  "processedData": {
-    "aioData": {
-      "documentInfo": {
-        "lastUpdated": {
-          "description": "Date the document was last updated",
-          "value": "2025-03-16"
-        },
-        "documentVersion": {
-          "description": "Document version number",
-          "value": "1.0.0"
-        }
-      },
-      "generalInformation": {
-        "legalName": {
-          "description": "Legal name for the model provider",
-          "value": "openai",
-          "authorities": {
-            "aio": true,
-            "ncas": false,
-            "dps": false
-          }
-        },
-        "modelAuthenticity": {
-          "description": "Model authenticity",
-          "value": "asdf",
-          "authorities": {
-            "aio": true,
-            "ncas": false,
-            "dps": false
-          }
-        },
-        "releaseDate": {
-          "description": "Release date",
-          "value": "2025-03-09",
-          "authorities": {
-            "aio": true,
-            "ncas": false,
-            "dps": false
-          }
-        }
-      },
-      "modelProperties": {
-        "modelArchitecture": {
-          "description": "Model architecture",
-          "value": "A general description of the model architecture, e.g. a transformer architecture.",
-          "authorities": {
-            "aio": true,
-            "ncas": false,
-            "dps": false
-          }
-        },
-        "outputModalities": {
-          "description": "Output modalities",
-          "value": {
-            "modalities": {
-              "text": {
-                "enabled": true,
-                "parameter": "5b"
-              },
-              "images": {
-                "enabled": false,
-                "parameter": ""
-              },
-              "audio": {
-                "enabled": false,
-                "parameter": ""
-              },
-              "video": {
-                "enabled": false,
-                "parameter": ""
-              }
-            },
-            "customMetrics": []
-          },
-          "authorities": {
-            "aio": true,
-            "ncas": true,
-            "dps": false
-          }
-        }
-      }
-    },
-    "ncasData": {
-      "documentInfo": {
-        "lastUpdated": {
-          "description": "Date the document was last updated",
-          "value": "2025-03-16"
-        },
-        "documentVersion": {
-          "description": "Document version number",
-          "value": "1.0.0"
-        }
-      },
-      "generalInformation": {
-        "modelFamily": {
-          "description": "Model family",
-          "value": "gpt",
-          "authorities": {
-            "aio": false,
-            "ncas": true,
-            "dps": false
-          }
-        },
-        "unionMarketRelease": {
-          "description": "Union market release",
-          "value": "2025-03-19",
-          "authorities": {
-            "aio": false,
-            "ncas": true,
-            "dps": false
-          }
-        },
-        "modelDependencies": {
-          "description": "Model dependencies",
-          "value": "The list of other general-purpose AI models that the model builds upon, if any (e.g. the list for llama-3.1-nemotron-70b would be [llama-3.1] and the list for llama-3.1 would be empty). For each listed model dependency, please include a copy or link to the associated Model Documentation or indicate that the Model Documentation is not accessible.",
-          "authorities": {
-            "aio": false,
-            "ncas": true,
-            "dps": false
-          }
-        }
-      },
-      "modelProperties": {
-        "designSpecification": {
-          "description": "Design specification of the model",
-          "value": "ey design choices of the model, including rationale and assumptions made, to provide better understanding of the model",
-          "authorities": {
-            "aio": false,
-            "ncas": true,
-            "dps": false
-          }
-        },
-        "outputModalities": {
-          "description": "Output modalities",
-          "value": {
-            "modalities": {
-              "text": {
-                "enabled": true,
-                "parameter": "5b"
-              },
-              "images": {
-                "enabled": false,
-                "parameter": ""
-              },
-              "audio": {
-                "enabled": false,
-                "parameter": ""
-              },
-              "video": {
-                "enabled": false,
-                "parameter": ""
-              }
-            },
-            "customMetrics": []
-          },
-          "authorities": {
-            "aio": true,
-            "ncas": true,
-            "dps": false
-          }
-        },
-        "totalModelSize": {
-          "description": "Total model size",
-          "value": "7.5*10^10",
-          "authorities": {
-            "aio": false,
-            "ncas": true,
-            "dps": false
-          }
-        }
-      }
-    },
-    "dpsData": {
-      "documentInfo": {
-        "lastUpdated": {
-          "description": "Date the document was last updated",
-          "value": "2025-03-16"
-        },
-        "documentVersion": {
-          "description": "Document version number",
-          "value": "1.0.0"
-        }
-      },
-      "generalInformation": {
-        "versionedModel": {
-          "description": "Versioned model name",
-          "value": "llama-7",
-          "authorities": {
-            "aio": false,
-            "ncas": false,
-            "dps": true
-          }
-        }
-      },
-      "modelProperties": {
-        "modelSizeRange": {
-          "description": "Model size range",
-          "value": "",
-          "authorities": {
-            "aio": false,
-            "ncas": false,
-            "dps": true
-          }
-        }
-      }
-    }
-  },
-  "generatedFiles": {
-    "aioFilePath": "/Users/wangzengdi/code/typescript/ai-code-transparency/packages/docs/aio.docx",
-    "ncasFilePath": "/Users/wangzengdi/code/typescript/ai-code-transparency/packages/docs/ncas.docx",
-    "dpsFilePath": "/Users/wangzengdi/code/typescript/ai-code-transparency/packages/docs/dps.docx"
   }
 }
