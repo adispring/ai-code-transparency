@@ -199,7 +199,7 @@ const createModalityFieldSchema = (fieldConfig: any, fieldPath: string) => {
                     'x-decorator': 'FormItem',
                     'x-component': 'Input',
                     'x-component-props': {
-                      placeholder: 'e.g., Maximum number of tokens',
+                      placeholder: 'Maximum input size:',
                     },
                     'x-reactions': {
                       dependencies: ['enabled'],
@@ -234,7 +234,7 @@ const createModalityFieldSchema = (fieldConfig: any, fieldPath: string) => {
                     'x-decorator': 'FormItem',
                     'x-component': 'Input',
                     'x-component-props': {
-                      placeholder: 'e.g., Maximum image resolution',
+                      placeholder: 'Maximum size',
                     },
                     'x-reactions': {
                       dependencies: ['enabled'],
@@ -269,7 +269,7 @@ const createModalityFieldSchema = (fieldConfig: any, fieldPath: string) => {
                     'x-decorator': 'FormItem',
                     'x-component': 'Input',
                     'x-component-props': {
-                      placeholder: 'e.g., Maximum audio duration',
+                      placeholder: 'Maximum size',
                     },
                     'x-reactions': {
                       dependencies: ['enabled'],
@@ -304,7 +304,7 @@ const createModalityFieldSchema = (fieldConfig: any, fieldPath: string) => {
                     'x-decorator': 'FormItem',
                     'x-component': 'Input',
                     'x-component-props': {
-                      placeholder: 'e.g., Maximum video length',
+                      placeholder: 'Maximum size',
                     },
                     'x-reactions': {
                       dependencies: ['enabled'],
@@ -341,7 +341,7 @@ const createModalityFieldSchema = (fieldConfig: any, fieldPath: string) => {
                   'x-decorator': 'FormItem',
                   'x-component': 'Input',
                   'x-component-props': {
-                    placeholder: 'Enter parameter value',
+                    placeholder: 'Maximum size:',
                   },
                 },
                 remove: {
@@ -353,7 +353,7 @@ const createModalityFieldSchema = (fieldConfig: any, fieldPath: string) => {
             properties: {
               add: {
                 type: 'void',
-                title: 'Add custom metric',
+                title: 'If any other please specify:',
                 'x-component': 'ArrayItems.Addition',
               },
             },
@@ -553,14 +553,20 @@ general-purpose AI model with systemic risk, write 'N/A'.`,
         inputModalities: createModalityFieldSchema(
           {
             title: 'Input modalities',
-            description: 'The supported input modalities for this model',
+            description: `For each selected
+modality, please include
+maximum input size or
+write 'N/A' if not defined.`,
           },
           'modelProperties.inputModalities'
         ),
         outputModalities: createModalityFieldSchema(
           {
             title: 'Output modalities',
-            description: 'The supported output modalities for this model',
+            description: `For each selected
+modality, please include
+maximum output size or
+write 'N/A' if not defined.`,
           },
           'modelProperties.outputModalities'
         ),
@@ -568,7 +574,7 @@ general-purpose AI model with systemic risk, write 'N/A'.`,
           {
             title: 'Total model size',
             description:
-              'The total number of parameters of the model, recorded with at least two significant figures, e.g 7.5*10^10',
+              'The total number of parameters of the model, recorded with at least two significant figures, e.g 7.5*10^10 parameters',
             component: 'Input',
             componentProps: {
               placeholder: 'e.g., 7.5*10^10',
@@ -579,6 +585,7 @@ general-purpose AI model with systemic risk, write 'N/A'.`,
         modelSizeRange: createFieldSchema(
           {
             title: 'Model size range',
+            description: 'Select the range that the total number of parameters belongs to.',
             component: 'Radio',
             componentProps: {
               options: [
