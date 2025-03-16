@@ -107,8 +107,9 @@ export class ModalityWrapperDto {
 
 export class DocumentInfoDto {
   @Description('Date the document was last updated')
-  @Transform(({ value }) => (value ? new Date(value) : new Date()))
-  lastUpdated: Date = new Date();
+  @IsString()
+  @IsOptional()
+  lastUpdated: string = '';
 
   @Description('Document version number')
   @IsString()
@@ -151,6 +152,34 @@ export class GeneralInformationDto {
   @ValidateNested()
   @Type(() => ValueDto)
   modelDependencies: ValueDto = new ValueDto();
+
+  static fromPlainObject(plainObj: Partial<GeneralInformationDto>): GeneralInformationDto {
+    const dto = new GeneralInformationDto();
+
+    if (plainObj.legalName) {
+      dto.legalName = { ...new ValueDto(), ...plainObj.legalName };
+    }
+    if (plainObj.modelFamily) {
+      dto.modelFamily = { ...new ValueDto(), ...plainObj.modelFamily };
+    }
+    if (plainObj.versionedModel) {
+      dto.versionedModel = { ...new ValueDto(), ...plainObj.versionedModel };
+    }
+    if (plainObj.modelAuthenticity) {
+      dto.modelAuthenticity = { ...new ValueDto(), ...plainObj.modelAuthenticity };
+    }
+    if (plainObj.releaseDate) {
+      dto.releaseDate = { ...new ValueDto(), ...plainObj.releaseDate };
+    }
+    if (plainObj.unionMarketRelease) {
+      dto.unionMarketRelease = { ...new ValueDto(), ...plainObj.unionMarketRelease };
+    }
+    if (plainObj.modelDependencies) {
+      dto.modelDependencies = { ...new ValueDto(), ...plainObj.modelDependencies };
+    }
+
+    return dto;
+  }
 }
 
 export class ModelPropertiesDto {
@@ -183,6 +212,53 @@ export class ModelPropertiesDto {
   @ValidateNested()
   @Type(() => ValueDto)
   modelSizeRange: ValueDto = new ValueDto();
+
+  static fromPlainObject(plainObj: Partial<ModelPropertiesDto>): ModelPropertiesDto {
+    const dto = new ModelPropertiesDto();
+
+    if (plainObj.modelArchitecture) {
+      dto.modelArchitecture = { ...new ValueDto(), ...plainObj.modelArchitecture };
+    }
+    if (plainObj.designSpecification) {
+      dto.designSpecification = { ...new ValueDto(), ...plainObj.designSpecification };
+    }
+    if (plainObj.inputModalities) {
+      dto.inputModalities = {
+        ...new ModalityWrapperDto(),
+        ...plainObj.inputModalities,
+        value: {
+          ...new ModalityValueDto(),
+          ...plainObj.inputModalities.value,
+          modalities: {
+            ...new ModalitiesDto(),
+            ...plainObj.inputModalities.value?.modalities,
+          },
+        },
+      };
+    }
+    if (plainObj.outputModalities) {
+      dto.outputModalities = {
+        ...new ModalityWrapperDto(),
+        ...plainObj.outputModalities,
+        value: {
+          ...new ModalityValueDto(),
+          ...plainObj.outputModalities.value,
+          modalities: {
+            ...new ModalitiesDto(),
+            ...plainObj.outputModalities.value?.modalities,
+          },
+        },
+      };
+    }
+    if (plainObj.totalModelSize) {
+      dto.totalModelSize = { ...new ValueDto(), ...plainObj.totalModelSize };
+    }
+    if (plainObj.modelSizeRange) {
+      dto.modelSizeRange = { ...new ValueDto(), ...plainObj.modelSizeRange };
+    }
+
+    return dto;
+  }
 }
 
 export class ModelDocumentationDto {

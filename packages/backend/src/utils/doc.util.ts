@@ -27,6 +27,8 @@ export async function generateDocFile(data: any, filename: string): Promise<stri
 function generateParagraphs(obj: any, prefix = ''): Paragraph[] {
   const paragraphs: Paragraph[] = [];
 
+  console.log(obj);
+
   for (const [key, value] of Object.entries(obj)) {
     if (value === null || value === undefined) continue;
 
