@@ -1,9 +1,101 @@
 import { Document, Packer, Paragraph, TextRun } from 'docx';
 import * as fs from 'fs';
 import * as path from 'path';
-import { getDescription } from '../decorators/description.decorator';
 
-export async function generateDocFile(data: any, filename: string): Promise<string> {
+interface FilteredData {
+  [key: string]: {
+    [key: string]: {
+      value: string;
+      description: string;
+    };
+  };
+}
+
+const FirstLevelKeyMap = {
+  documentInfo: 'Document Information',
+  generalInformation: 'General Information',
+  modelProperties: 'Model Properties',
+};
+
+function generateParagraphs(data: FilteredData): Paragraph[] {
+  const paragraphs: Paragraph[] = [];
+
+  paragraphs.push(
+    new Paragraph({
+      text: 'Model Documentation Form',
+      heading: 'Title',
+      alignment: 'center',
+    })
+  );
+
+  Object.entries(data).forEach(
+    ([section, content]: [string, FilteredData[keyof FilteredData]], sectionIndex) => {
+      // Add extra spacing before section (except first section)
+      if (sectionIndex > 0) {
+        paragraphs.push(
+          new Paragraph({
+            spacing: {
+              before: 400, // Large spacing between sections
+            },
+          })
+        );
+      }
+
+      // Add section heading (centered)
+      paragraphs.push(
+        new Paragraph({
+          text: FirstLevelKeyMap[section as keyof typeof FirstLevelKeyMap] || section,
+          heading: 'Heading1',
+          alignment: 'center',
+          spacing: {
+            after: 300, // Medium spacing after heading
+          },
+        })
+      );
+
+      if (section === 'documentInfo') {
+        // 在同一行放置两个字段, 一个是日期, 一个是版本号，一个在左边，一个在右边, 用于显示文档的最后更新日期和版本号,两个间隔一定的距离
+        const lastUpdated = content.lastUpdated;
+        const documentVersion = content.documentVersion;
+        paragraphs.push(
+          new Paragraph({
+            children: [
+              new TextRun({ text: `${lastUpdated.description}: ${lastUpdated.value}`, bold: true }),
+              new TextRun({ text: ' '.repeat(10) }),
+              new TextRun({
+                text: `${documentVersion.description}: ${documentVersion.value}`,
+                bold: true,
+              }),
+            ],
+          })
+        );
+      } else {
+        // Add bullet points for each item
+        Object.values(content).forEach(item => {
+          paragraphs.push(
+            new Paragraph({
+              children: [new TextRun(`${item.description}: ${item.value}`)],
+              bullet: {
+                level: 0,
+              },
+              spacing: {
+                before: 100, // Small spacing between list items
+                after: 100,
+              },
+            })
+          );
+        });
+      }
+
+      // Add spacing after each section
+      paragraphs.push(new Paragraph({}));
+    }
+  );
+
+  return paragraphs;
+}
+
+export async function generateDocFile(data: FilteredData, filename: string): Promise<string> {
   const doc = new Document({
     sections: [
       {
@@ -22,37 +114,4 @@ export async function generateDocFile(data: any, filename: string): Promise<stri
   const buffer = await Packer.toBuffer(doc);
   fs.writeFileSync(filepath, buffer);
   return filepath;
-}
-
-function generateParagraphs(obj: any, prefix = ''): Paragraph[] {
-  const paragraphs: Paragraph[] = [];
-
-  console.log(obj);
-
-  for (const [key, value] of Object.entries(obj)) {
-    if (value === null || value === undefined) continue;
-
-    const description = getDescription(obj, key) || key;
-    const formattedKey = prefix ? `${prefix}.${key}` : key;
-
-    if (typeof value === 'object' && !Array.isArray(value)) {
-      paragraphs.push(
-        new Paragraph({
-          children: [new TextRun({ text: `${formattedKey}:`, bold: true })],
-        })
-      );
-      paragraphs.push(...generateParagraphs(value, formattedKey));
-    } else {
-      paragraphs.push(
-        new Paragraph({
-          children: [
-            new TextRun({ text: `${description}: `, bold: true }),
-            new TextRun({ text: String(value) }),
-          ],
-        })
-      );
-    }
-  }
-
-  return paragraphs;
 }

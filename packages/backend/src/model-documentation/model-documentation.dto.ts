@@ -123,7 +123,7 @@ export class GeneralInformationDto {
   @Type(() => ValueDto)
   legalName: ValueDto = new ValueDto();
 
-  @Description('Model family:')
+  @Description('Model family')
   @ValidateNested()
   @Type(() => ValueDto)
   modelFamily: ValueDto = new ValueDto();
@@ -187,6 +187,11 @@ export class ModelPropertiesDto {
   @ValidateNested()
   @Type(() => ValueDto)
   modelArchitecture: ValueDto = new ValueDto();
+
+  @Description('Model architecture With Risk')
+  @ValidateNested()
+  @Type(() => ValueDto)
+  modelArchitectureWithRisk: ValueDto = new ValueDto();
 
   @Description('Design specification of the model')
   @ValidateNested()

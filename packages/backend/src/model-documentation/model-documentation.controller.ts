@@ -1,5 +1,6 @@
 import { Controller, Post, Body, Req } from '@nestjs/common';
 import {
+  DocumentInfoDto,
   GeneralInformationDto,
   ModelDocumentationDto,
   ModelPropertiesDto,
@@ -9,88 +10,67 @@ import { printFieldDescriptions } from 'src/utils/metadata.util';
 import { getDescription } from 'src/decorators/description.decorator';
 import { generateDocFile } from '../utils/doc.util';
 
+const transformDocumentInfo = (documentInfo: DocumentInfoDto) => {
+  return Object.fromEntries(
+    Object.entries(documentInfo).map(([key, value]) => [
+      key,
+      { description: getDescription(documentInfo, key) ?? '', value },
+    ])
+  );
+};
+
 const filterDataByAuthority = (
   data: GeneralInformationDto | ModelPropertiesDto,
   authority: 'aio' | 'ncas' | 'dps'
 ) => {
-  const filteredEntries = Object.entries(data).filter(([key, value]) => {
-    return value.authorities?.[authority];
-  });
+  const filteredEntries = Object.fromEntries(
+    Object.entries(data)
+      .map(([key, value]) => [key, { description: getDescription(data, key), ...value }])
+      .filter(([key, value]) => {
+        return value.authorities?.[authority];
+      })
+  );
 
-  const result = Object.fromEntries(filteredEntries);
-  // console.log('Filtered Data:', result);
-  // console.log('filteredEntries:', filteredEntries);
-
-  // Preserve descriptions for each field
-  // filteredEntries.forEach(([key]) => {
-  //   const description = getDescription(data, key);
-  //   // console.log('Field Description:', { key, description });
-
-  //   if (description) {
-  //     Reflect.defineMetadata('description', description, result, key);
-  //   }
-  // });
-
-  return result;
+  return filteredEntries;
 };
 
 @Controller('api/model-documentation')
 export class ModelDocumentationController {
   @Post()
   async submitForm(@Req() req: Request, @Body() formData: ModelDocumentationDto) {
-    console.log('req.body:', req.body);
-    console.log('Form Data:', formData);
+    // console.log('req.body:', req.body);
+    // console.log('Form Data:', formData);
     try {
       // printFieldDescriptions(ModelDocumentationDto);
 
       // 创建新的 ModelDocumentationDto 实例
-      const aioData = new ModelDocumentationDto();
-      aioData.documentInfo = formData.documentInfo;
-      aioData.generalInformation = GeneralInformationDto.fromPlainObject(
-        filterDataByAuthority(formData.generalInformation, 'aio')
-      ) as GeneralInformationDto;
-      aioData.modelProperties = ModelPropertiesDto.fromPlainObject(
-        filterDataByAuthority(formData.modelProperties, 'aio')
-      ) as ModelPropertiesDto;
+      const aioData = {
+        documentInfo: transformDocumentInfo(formData.documentInfo),
+        generalInformation: filterDataByAuthority(formData.generalInformation, 'aio'),
+        modelProperties: filterDataByAuthority(formData.modelProperties, 'aio'),
+      };
 
-      const ncasData = new ModelDocumentationDto();
-      ncasData.documentInfo = formData.documentInfo;
-      ncasData.generalInformation = filterDataByAuthority(
-        formData.generalInformation,
-        'ncas'
-      ) as GeneralInformationDto;
-      ncasData.modelProperties = filterDataByAuthority(
-        formData.modelProperties,
-        'ncas'
-      ) as ModelPropertiesDto;
+      const ncasData = {
+        documentInfo: transformDocumentInfo(formData.documentInfo),
+        generalInformation: filterDataByAuthority(formData.generalInformation, 'ncas'),
+        modelProperties: filterDataByAuthority(formData.modelProperties, 'ncas'),
+      };
 
-      const dpsData = new ModelDocumentationDto();
-      dpsData.documentInfo = formData.documentInfo;
-      dpsData.generalInformation = filterDataByAuthority(
-        formData.generalInformation,
-        'dps'
-      ) as GeneralInformationDto;
-      dpsData.modelProperties = filterDataByAuthority(
-        formData.modelProperties,
-        'dps'
-      ) as ModelPropertiesDto;
+      const dpsData = {
+        documentInfo: transformDocumentInfo(formData.documentInfo),
+        generalInformation: filterDataByAuthority(formData.generalInformation, 'dps'),
+        modelProperties: filterDataByAuthority(formData.modelProperties, 'dps'),
+      };
 
-      // 从原始 formData 中获取描述信息
-      // const legalNameDescription = getDescription(aioData.generalInformation, 'legalName');
-      // console.log('Legal Name Description:', legalNameDescription);
-
-      // TODO: 添加数据持久化逻辑
-
-      // console.log('aioData:', JSON.stringify(aioData, null, 2));
-      // console.log('ncasData:', JSON.stringify(ncasData, null, 2));
-      // console.log('dpsData:', JSON.stringify(dpsData, null, 2));
-
-      const timestamp = Math.floor(Date.now() / 1000);
       const aioFilePath = await generateDocFile(aioData, `aio`);
       const ncasFilePath = await generateDocFile(ncasData, `ncas`);
       const dpsFilePath = await generateDocFile(dpsData, `dps`);
 
       console.log('Generated File Paths:', { aioFilePath, ncasFilePath, dpsFilePath });
+
+      console.log('AIO Data:', aioData);
+      console.log('NCAS Data:', ncasData);
+      console.log('DPS Data:', dpsData);
 
       return {
         success: true,
